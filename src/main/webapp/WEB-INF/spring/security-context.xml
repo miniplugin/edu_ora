@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:security="http://www.springframework.org/schema/security"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.1.xsd">
+     
+    <!-- url패턴과 스프링 시큐리티를 무시-->
+    <security:http pattern="/**/*.js" security="none"/>
+    <security:http pattern="/**/*.css" security="none"/>
+    <security:http pattern="/images/*" security="none"/>
+
+    <!-- 로그인페이지, 기본적인 인증, 로그아웃 기능을 사용, SpEL 사용 -->
+    <security:http auto-config="true" use-expressions="true">
+         <!-- 세션 관리 -->
+        <security:session-management invalid-session-url="/">
+            <!-- 동일 ID의 세션 최대수가 한 개, 그 이상일 경우는 기존 세션 무효화 -->
+            <security:concurrency-control max-sessions="1" error-if-maximum-exceeded="false" />
+        </security:session-management>
+        
+        <!-- 특정 url 패턴과 그것에 대한 권한 보안 해제를 위해서 csrf disabled="true" -->
+        <security:intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')" />
+        <security:intercept-url pattern="/**/create" access="hasAnyRole('ROLE_USER, ROLE_ADMIN')" method="GET"/>
+        <security:intercept-url pattern="/**/update" access="hasAnyRole('ROLE_USER, ROLE_ADMIN')"/>
+        <security:intercept-url pattern="/**/delete" access="hasAnyRole('ROLE_USER, ROLE_ADMIN')"/> 
+        
+        <security:intercept-url pattern="/**" access="permitAll"/>
+        <security:csrf disabled="true" />
+        <!--     
+                로그인 폼
+                login-page                                :    로그인 폼 페이지
+                login-processing-url                      :    로그인 폼 페이지에서 post로 보내는 url
+                always-use-default-target="true"일 경우    :    write -> login -> list
+                always-use-default-target="false"일 경우   :    write -> login -> write
+                default-target-url                        :    인증이 성공하면 redirect로 보내는 url        
+                authentication-failure-url                :    로그인 폼 페이지에서 실패할때 보내는 url
+                username-parameter                        :    로그인 폼 파라미터 (아이디)
+                password-parameter                        :    로그인 폼 파라미터 (비밀번호)
+         -->
+        <security:form-login 
+            login-page="/login"
+            login-processing-url="/login"
+            always-use-default-target="true"
+            default-target-url="/login_success"
+            authentication-failure-url="/login?error=true"
+            username-parameter="user_id"
+            password-parameter="user_pw"
+        />
+        
+        <!-- 
+            자동로그인  
+            key                      :    키 이름
+            token-validity-seconds   :    유효시간
+            remember-me-parameter    :    로그인 폼 파라미터 (remember-me)
+        -->
+        <security:remember-me key="remember-key" token-validity-seconds="604800" remember-me-parameter="remember-me-param"/>
+        
+        <!-- 
+            로그아웃
+            logout-url            :    로그아웃 url
+            logout-success-url    :    로그아웃 정상적일때 보내는 url
+            invalidate-session    :    로그아웃 했을때 세션을 무효화 할껀지 설정
+            delete-cookies        :    삭제하는 쿠키
+         -->
+        <security:logout logout-url="/logout" logout-success-url="/" invalidate-session="true" 
+            delete-cookies="JSESSIONID,SPRING_SECURITY_REMEMBER_ME_COOKIE"/>
+        
+    </security:http>
+    
+    <!-- 인증 관련 설정 -->
+    <security:authentication-manager>
+        <!-- 스프링 내장 인증 제공자, userDetails와 userDetailsService 인터페이스 이용-->
+        <security:authentication-provider>
+            <!--
+                jdbc 베이스로 한  userDetailsService
+                data-source-ref                    : 참조할 DB빈 
+                users-by-username-query            : 로그인 폼에서 입력된 아이디로 아이디, 비번, 활성화 칼럼을 select해 가져오는 쿼리
+                                                     기본 파라미터가 username, password, enabled이므로 db의 칼럼이 다르면 as로 맞춰준다
+                authorities-by-username-query      : 로그인 폼에서 입력된 아이디로 아이디, 권한 칼럼을 select해 가져오는 쿼리
+                                                    기본 파라미터가 username, authority이므로 db의 칼럼이 다르면 as로 맞춰준다 user_roles 테이블은 tbl_member로..
+            -->
+            <security:jdbc-user-service
+                data-source-ref="dataSource"
+                users-by-username-query="select user_id as no, user_pw as password, enabled from tbl_member where user_id = ?"
+                authorities-by-username-query="select user_id as no, levels as authority from tbl_member where user_id = ?"
+            />
+            <security:password-encoder ref="passwordEncoder"/>
+        </security:authentication-provider>
+    </security:authentication-manager>
+    <!-- 스프링 내장 BCryptPasswordEncoder 암호화 이용-->
+    <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+</beans>
