@@ -10,7 +10,7 @@
 	<!-- depency버전확인 https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
 	<properties>
 		<java-version>1.8</java-version>
-		<org.springframework-version>4.3.16.RELEASE</org.springframework-version>
+		<org.springframework-version>4.3.22.RELEASE</org.springframework-version>
 		<org.aspectj-version>1.8.9</org.aspectj-version>
 		<org.slf4j-version>1.6.6</org.slf4j-version>
 		<spring.security.version>4.1.3.RELEASE</spring.security.version>
