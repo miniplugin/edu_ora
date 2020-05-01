@@ -1,7 +1,8 @@
 # 스프링 5 프로그래밍 입문 학습 요약
 
 ---
-초보 웹 개발자를 위한 스프링 5 프로그래밍 입문, 최범균 저
+- [학습목차](https://github.com/miniplugin/human)
+- 초보 웹 개발자를 위한 스프링 5 프로그래밍 입문, 최범균 저
 ---
 
 ## ch 02 스프링 시작하기
@@ -13,17 +14,11 @@ org.springframework.spring-context
 $ mvn compile
 ```
 
-#### gradle
-```bash
-$ gradle wrapper
-$ gradle compileJava
-```
-
 #### Container & Bean
-Role|Spring|Laravel
+Role|Spring
 ---|---|---
-의존 역전 컨테이너|BeanFactory, ApplicationContext|ServiceContainer
-객체 조립 공식 제공|Bean|ServiceProvider
+의존 역전 컨테이너|BeanFactory, ApplicationContext
+객체 조립 공식 제공|Bean
 
 **스프링의 Bean 제공 방법**
 - `AnnotationConfigApplicationContext`
