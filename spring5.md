@@ -16,7 +16,7 @@ $ mvn compile
 
 #### Container & Bean
 Role|Spring
----|---|---
+---|---
 의존 역전 컨테이너|BeanFactory, ApplicationContext
 객체 조립 공식 제공|Bean
 
