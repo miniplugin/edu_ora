@@ -5,8 +5,37 @@
 부트스트랩/AdminLTE/기타등등<br>책 내에서 사용된 외부 오픈소스의 경우 원 오픈소스의 라이선스 정책을 유지합니다.
 [라이센스 보기](https://github.com/spring-projects/spring-framework/blob/master/src/docs/dist/license.txt)
 ***
+>작업일자(아래): 20200523
+### 기존 스프링 웹프로젝트를 오라클용으로 변경완료.
+기존 Mysql에서는 테이블 AI(자동증가)로 처리 되어서, Mybatis에서 코드 수정 없이 사용하였으나,
+
+Oracle용으로 변경 후 AI(자동증가)속성이 없으므로 테이블 시퀸스를 새로 생성 하였습니다.
+
+-- 오라클 전용 시퀸스 방식
+
+```
+CREATE SEQUENCE BNO_SEQ
+START WITH 215
+INCREMENT BY 1
+MAXVALUE 10000
+MINVALUE 1
+NOCYCLE;
+CREATE SEQUENCE RNO_SEQ
+START WITH 1
+INCREMENT BY 1
+MAXVALUE 10000
+MINVALUE 1
+NOCYCLE;
+--SELECT SEQUENCE_NAME, MIN_VALUE, MAX_VALUE, INCREMENT_BY, CYCLE_FLAG FROM USER_SEQUENCES; //시퀸스 종류확인
+--select BNO_SEQ.nextval from dual; //시퀸스 번호 확인쿼리
+
+```
+- mybatis insert쿼리 매퍼도 수정 해야 합니다.(아래2개) 
+- 게시판 새로글작성: /src/main/resources/mappers/boardMapper.xml
+- 댓글 새로 작성: /src/main/resources/mappers/replyMapper.xml
+
 >작업일자(아래): 20200430
-### 기존 스프링 웹프로젝트를 오라클용으로 변경하고 았습니다.
+### 기존 스프링 웹프로젝트를 오라클용으로 변경 작업1.
 기존 소스 정보:
 - 소스: https://github.com/miniplugin/springframework
 - 아래 DB변경은 다음파일에서 가능: src/main/webapp/WEB-INF/spring/root-context.xml

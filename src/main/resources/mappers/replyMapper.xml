@@ -22,10 +22,20 @@
 		where bno =#{bno}
 		order by rno desc
 	</select>
-
+	<!-- 
+	오라클용 추가 ibatis
+	<selectKey keyProperty="id" resultClass="int" order="BEFORE"> 
+	오라클용 추가 Mybatis
+	<selectKey keyProperty="rno" resultType="int" order="BEFORE">
+	SELECT RNO_SEQ.nextval From DUAL
+	</selectKey>
+	-->
 	<insert id="insertReply">
-		insert into tbl_reply (bno, replytext, replyer)
-		values (#{bno},#{replytext},#{replyer})
+	    <selectKey keyProperty="rno" resultType="int" order="BEFORE">
+			SELECT RNO_SEQ.nextval From DUAL
+		</selectKey>
+		insert into tbl_reply (rno, bno, replytext, replyer)
+		values (#{rno},#{bno},#{replytext},#{replyer})
 	</insert>
 
 	<update id="updateReply">
