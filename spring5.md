@@ -988,13 +988,12 @@ public String foo(LoginCommand loginCommnad, Errors errors, HttpServletRequest r
 프레임워크|기능
 ---|---
 Spring|`Interceptor`, `HandlerInterceptor`
-Laravel|`Middleware`, `HttpMiddleware`
 
 호출 시점|Spring|Laravel
 ---|---|---
-컨트롤러(핸들러) 실행 전|`preHandle`|Before Middleware
-컨트롤러(핸들러) 실행 후, 뷰 렌더링 전|`postHandle`|After Middleware
-뷰를 실행한 후|`afterCompletion`|Terminable Middleware
+컨트롤러(핸들러) 실행 전|`preHandle`
+컨트롤러(핸들러) 실행 후, 뷰 렌더링 전
+뷰를 실행한 후|`afterCompletion`
 
 - 적용법
     - `HanlderInterceptor`를 구현한 인터셉터 클래스 구현
@@ -1032,7 +1031,7 @@ public class MvcConfig implements WebMvcConfigurer {
     - `void afterCompletion(HttpServletRequest req, HttpServletResponse resp, Object handler, Exception e) throws Exception`
 
 #### 쿠키
-- 사용법? 
+- 사용법
     - 요청 매핑을 적용한 컨트롤러 메서드에 `@CookieValue` annotation 파라미터 적용하여 `Cookie` 객체를 구하여 쿠키 값에 접근할 수 있음
     - `HttpServletResponse#addCookie()` 메서드를 이용해서 응답 헤더에 쿠키를 내보낼 수 있음
 ```java
@@ -1137,13 +1136,13 @@ public class CommonExceptionHandler {
 
 ## ch15 간단한 웹 애플리케이션 구조
 #### 간단한 웹 애플리케이션의 구성 요소
-- **프론트 서블릿**? 웹 브라우저의 요청을 받는 창구 역할. 스프링 MVC에서는 `DispatcherServlet`이 프론트 서블릿의 역할을 수행한다.
-- **컨트롤러**? 애플리케이션이 제공하는 기능과 사용자 요청을 연결하는 매개체로서 기능 제공을 위한 로직을 직접 수행하지는 않는다. 대신 해당 로직을 제공하는 서비스에 그 처리를 위임한다.
+- **프론트 서블릿** 웹 브라우저의 요청을 받는 창구 역할. 스프링 MVC에서는 `DispatcherServlet`이 프론트 서블릿의 역할을 수행한다.
+- **컨트롤러** 애플리케이션이 제공하는 기능과 사용자 요청을 연결하는 매개체로서 기능 제공을 위한 로직을 직접 수행하지는 않는다. 대신 해당 로직을 제공하는 서비스에 그 처리를 위임한다.
     - 클라이언트가 요구한 기능을 실행
     - 응답 결과를 생성하는데 필요한 모델 생성
     - 응답 결과를 생성할 뷰 선택
-- **서비스**? 사용자에게 비밀번호를 변경 기능을 제공하려면 수정 폼을 제공하고, 로그인 여부를 확인하고, 실제로 비밀번호를 변경해야 한다. **핵심 로직은 비밀번호를 변경하는 것**이다. 예를 들어 웹 폼 대신에 콘솔에서 명령어를 입력해서 비밀번호를 변경할 수도 있다. 여기서 폼이나 콘솔은 사용자와의 상호 작용을 위한 연결 고리에 해당하지, 핵심 로직인 비밀번호 변경 자체는 아니라는 점을 명심하자.
-- **DAO**? Data Access Object. DB와 애플리케이션 간에 데이터를 이동시켜 주는 역할을 한다.
+- **서비스** 사용자에게 비밀번호를 변경 기능을 제공하려면 수정 폼을 제공하고, 로그인 여부를 확인하고, 실제로 비밀번호를 변경해야 한다. **핵심 로직은 비밀번호를 변경하는 것**이다. 예를 들어 웹 폼 대신에 콘솔에서 명령어를 입력해서 비밀번호를 변경할 수도 있다. 여기서 폼이나 콘솔은 사용자와의 상호 작용을 위한 연결 고리에 해당하지, 핵심 로직인 비밀번호 변경 자체는 아니라는 점을 명심하자.
+- **DAO** Data Access Object. DB와 애플리케이션 간에 데이터를 이동시켜 주는 역할을 한다.
 
 #### 서비스의 구현
 - 예를 들어, 비밀번호 변경 기능은 다음 로직을 서비스에서 수행한다.
