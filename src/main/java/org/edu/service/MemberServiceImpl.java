@@ -61,5 +61,15 @@ public class MemberServiceImpl implements IF_MemberService {
 	public List<MemberVO> listAll(SearchCriteria cri) throws Exception {
 		return memberDAO.listAll(cri);
 	}
+	
+	/* 배치작업 */
+	@Override
+    public void testJobMethod() throws Exception {
+		List<MemberVO> list = memberDAO.getMembersTime();
+		for(MemberVO memberVO : list) {
+			System.out.println(memberVO.getUser_id() + ":" + memberVO.getEmail());
+		}
+    	System.out.println("6개월 동안 회원정보 수정이 없는 회원정보....");
+    }
 
 }

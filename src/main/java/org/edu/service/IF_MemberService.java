@@ -20,4 +20,7 @@ public interface IF_MemberService {
 	
 	public List<MemberVO> listAll(SearchCriteria cri) throws Exception;
 	
+	/* 배치작업 */
+	public void testJobMethod() throws Exception;
+	
 }

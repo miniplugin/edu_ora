@@ -148,5 +148,25 @@
   <delete id="delete">
 	 delete from tbl_member where user_id = #{user_id}
   </delete>
-  
+  <!-- 배치작업 오라클용 getTime() 6개월 동안 회원정보 수정이 없는 회원 -->
+  <select id="listMembersTime" resultType="org.edu.vo.MemberVO">
+	  <![CDATA[ 
+      select 
+	    * 
+	  from 
+	    tbl_member 
+	  where UPDATE_DATE < ADD_MONTHS(sysdate,-6)
+	  ]]>
+  </select>
+    <!-- 배치작업 Mysql용 now() 6개월 동안 회원정보 수정이 없는 회원정보 
+  <select id="listMembersTime" resultType="org.edu.vo.MemberVO">
+	  <![CDATA[ 
+      select 
+	    * 
+	  from 
+	    tbl_member 
+	  where UPDATE_DATE < DATE_SUB(now(), INTERVAL 6 MONTH)
+	  ]]>
+  </select> 
+  -->
 </mapper>

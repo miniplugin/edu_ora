@@ -20,4 +20,6 @@ public interface IF_MemberDAO {
 	public MemberVO readWithPW(String userid, String userpw)throws Exception;
 	
 	public void delete(String userid) throws Exception;//학생 실습용
+
+	public List<MemberVO> getMembersTime() throws Exception; //배치작업 6개월 동안 회원정보 수정이 없는 회원정보
 }

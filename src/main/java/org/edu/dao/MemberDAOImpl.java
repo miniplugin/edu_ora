@@ -84,5 +84,11 @@ public class MemberDAOImpl implements IF_MemberDAO {
 	public void delete(String userid) throws Exception {
 		sqlSession.delete(namespace + ".delete", userid);
 	}
+	
+	//배치작업 6개월 동안 회원정보 수정이 없는 회원정보
+	@Override
+	public List<MemberVO> getMembersTime() {
+		return sqlSession.selectList(namespace + ".listMembersTime");
+	}
 
 }

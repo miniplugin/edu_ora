@@ -276,13 +276,13 @@
 	        <version>1.2.3.RELEASE</version>
 	    </dependency>
 	    
-	    <!-- quartz 라이브러러리 -->
+	    <!-- quartz 라이브러러리 배치작업 -->
 		<dependency>
 		    <groupId>org.quartz-scheduler</groupId>
 		    <artifactId>quartz</artifactId>
 		    <version>2.3.0</version>
 		</dependency>
-		<!-- 스프링 Quartz 도우미 라이브러리 -->
+		<!-- 스프링 Quartz 도우미 라이브러리 배치작업 -->
 		<dependency>
 		    <groupId>org.springframework</groupId>
 		    <artifactId>spring-context-support</artifactId>
