@@ -1298,36 +1298,34 @@ Web - Jsp사용
 
 ----
 ### 소스코드
-#### Controller(server)
-```java
-	@RequestMapping(value = "/list", method = RequestMethod.GET)
-	public String list(PageMaker pagemaker, Model model) {
-
-		logger.info("START LIST");
+#### @Controller
+```AdminController 
+	@RequestMapping(value = "/admin/board/list", method = RequestMethod.GET)
+	public String boardList(PageMaker pagemaker, Locale locale, Model model) {
 
 		int count = 0;
 
 		pagemaker.setPage(pagemaker.getPage());
 
-		count = service.count();   // 레코드 총 갯수 구함
+		count = boardService.count();   // 레코드 총 갯수 구함
 		pagemaker.setCount(count); // 페이지 계산
 
-		List<BoardVO> list = service.getRead(pagemaker.getPage());
+		List<BoardVO> list = boardService.selectBoard(pagemaker.getPage());
 
-		System.out.println("list = " + list.toString());
+		//System.out.println("list = " + list.toString());//디버그
 
-		model.addAttribute("result", list);
+		model.addAttribute("boardList", list);
 		model.addAttribute("pageMaker", pagemaker);
 
-		return "/board/list";
+		return "admin/board/board_list";
 	}	
 ```
- Web(jsp)에서 현재 페이지 번호를 Controller(list)에 전달,
- Controller는 Pagemaker클래스에 접근하여 페이지 계산.
+ Web(jsp)에서 현재 페이지 번호를 Controller(/admin/board/list)에 전달,
+ Controller는 PageMaker클래스에 접근하여 페이지 계산.
  ----
 
-####pagemaker.java
-```java
+####PageMaker.java
+```java클래스
 	public Integer getPage() {
 		return page;
 	}
@@ -1342,7 +1340,7 @@ Web - Jsp사용
 		this.page = page;
 	}
 
-public void setCount(Integer count) {
+	public void setCount(Integer count) {
 
 		if (count < 1) {
 			return;
@@ -1386,7 +1384,7 @@ public void setCount(Integer count) {
 
 ----
 
-#### list.jsp (일부)
+#### board_list.jsp (일부)
 ```jsp
 <ul class="pageUL">
 	<c:if test="${pageMaker.prev }">
