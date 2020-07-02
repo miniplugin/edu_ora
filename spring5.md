@@ -1358,8 +1358,8 @@ public void setCount(Integer count) {
 	private void calcPage() {
 
 		// page변수는 현재 페이지번호
-		int tempEnd = (int)(Math.ceil(page / 10.0) * 10);
-		// 현재 페이지번호를 기준으로 끝 페이지를 계산한다.
+		int tempEnd = (int)(Math.ceil(page / 10.0) * 10); //ceil함수는 천장함수로 11.1 -> 12출력합니다. <-> floor 바닥함수
+		// 현재 페이지번호를 기준으로 끝 페이지를 계산한다.(참고 round 는 반올림함수)
 		
 		System.out.println("page = " +page);
 		System.out.println("tempEnd = "+tempEnd);
@@ -1369,10 +1369,10 @@ public void setCount(Integer count) {
 		this.start = tempEnd - 9;
 		
 
-		if (tempEnd * 10 > this.count) { // 가상으로 계산한 tempEnd크기가 실제 count보다 많을경우
+		if (tempEnd * 10 > this.count) { // 현재페이지 번호로 계산한 tempEnd 끝페이지 갯수가 실제 게시물 count 개수보다 많을경우
 			this.end = (int) Math.ceil(this.count / 10.0);
 		} else {						
-			this.end = tempEnd;			 // 실제 count가 tempEnd보다 많을경우
+			this.end = tempEnd;	 // 실제 게시물 count갯수가 현재페이지 번호로 계산된 tempEnd 끝페이지 개수보다 많을경우
 		}
 
 		System.out.println("this.end = "+this.end);
