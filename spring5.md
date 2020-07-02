@@ -1281,9 +1281,28 @@ public class RestMemberController {
 
 ---
 
-
 # #게시판 페이징 처리(20200703강의예정)
 ----
+
+### 어제 강의중 신규로 사용한 스프링 애노테이션 부분 확인
+- @ResponseBody 에서 Body와 Header 부분 비교(크롬 > 개발자도구 > 네트워크 탭)
+- @Transactional 이론
+
+### 어제 작업중 미완성 소스 부분 처리
+```
+	List<String> files = new ArrayList<>();
+	files.add("sample1.jpg");
+	files.add("sample2.jpg");
+	files.add("sample3.jpg");
+	String[] filenames = new String[files.size()];
+	int cnt = 0;
+	for(String fileName : files) {
+		filenames[cnt++] = fileName;
+	}
+	System.out.println(filenames[0] + filenames[1] + filenames[2]);
+```
+
+
 
 ### 개발환경
 Server - Java(Spring 4.3.22)사용
