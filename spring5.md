@@ -1388,14 +1388,15 @@ Public java클래스
 
 #### board_list.jsp (일부)
 ```jsp
-<ul class="pageUL">
-	<c:if test="${pageMaker.prev }">
+<div class="text-center">
+<ul class="pagination">
+	<c:if test="${pageMaker.prev}">
 		<li><a href='list?page=${pageMaker.start -1}'>이전</a></li>
 	</c:if>
 
-	<c:forEach begin="${pageMaker.start }" end="${pageMaker.end}" var="idx">
+	<c:forEach begin="${pageMaker.start}" end="${pageMaker.end}" var="idx">
 		<li
-			class='<c:out value="${idx == pageMaker.page?'current':''}"/>'>
+			class='<c:out value="${idx == pageMaker.page?'active':''}"/>'>
 			<a href='list?page=${idx}'>${idx}</a>
 		</li>
 
@@ -1406,5 +1407,6 @@ Public java클래스
 		<li><a href='list?page=${pageMaker.end +1}'>다음</a></li>
 	</c:if>
 </ul>
+</div>
 ```
 서버에서 계산된 페이지값을 받아서 화면(Web)에 출력 부분입니다.
