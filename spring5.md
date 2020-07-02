@@ -1391,20 +1391,20 @@ Public java클래스
 <div class="text-center">
 <ul class="pagination">
 	<c:if test="${pageMaker.prev}">
-		<li><a href='list?page=${pageMaker.start -1}'>이전</a></li>
+		<li><a href='/admin/board/list?page=${pageMaker.start -1}'>이전</a></li>
 	</c:if>
 
 	<c:forEach begin="${pageMaker.start}" end="${pageMaker.end}" var="idx">
 		<li
 			class='<c:out value="${idx == pageMaker.page?'active':''}"/>'>
-			<a href='list?page=${idx}'>${idx}</a>
+			<a href='/admin/board/list?page=${idx}'>${idx}</a>
 		</li>
 
 	</c:forEach>
 
 	<c:if test="${pageMaker.next }">
 
-		<li><a href='list?page=${pageMaker.end +1}'>다음</a></li>
+		<li><a href='/admin/board/list?page=${pageMaker.end +1}'>다음</a></li>
 	</c:if>
 </ul>
 </div>
