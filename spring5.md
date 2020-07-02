@@ -1369,16 +1369,16 @@ public void setCount(Integer count) {
 		this.start = tempEnd - 9;
 		
 
-		if (tempEnd * 10 > this.count) { // 현재페이지 번호로 계산한 tempEnd 끝페이지 갯수가 실제 게시물 count 개수보다 많을경우
+		if (tempEnd * 10 > this.count) { // 현재페이지 번호로 계산한 게시물 개수가 실제 게시물 개수보다 많을경우
 			this.end = (int) Math.ceil(this.count / 10.0);
 		} else {						
-			this.end = tempEnd;	 // 실제 게시물 count갯수가 현재페이지 번호로 계산된 tempEnd 끝페이지 개수보다 많을경우
+			this.end = tempEnd;	 // 현재페이지 번호로 계산된 게시물 개수가 실제 게시물 개수보다 적거나 같을 경우
 		}
 
 		System.out.println("this.end = "+this.end);
 		
-		this.prev = this.start != 1; 
-		this.next = this.end * 10 < this.count;	
+		this.prev = this.start != 1;            //시작페이지가 1보다 크면 무조건 이전페이지가 있음 true
+		this.next = this.end * 10 < this.count;	//현재페이지 번호로 계산된 게시물개수가 실제 게시물 개수보다 작다면 다음페이지가 있음 true
 	}
 
 ```
