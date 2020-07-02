@@ -1299,7 +1299,8 @@ Web - Jsp사용
 ----
 ### 소스코드
 #### @Controller
-```AdminController 
+```
+AdminController클래스
 	@RequestMapping(value = "/admin/board/list", method = RequestMethod.GET)
 	public String boardList(PageMaker pagemaker, Locale locale, Model model) {
 
@@ -1325,7 +1326,8 @@ Web - Jsp사용
  ----
 
 ####PageMaker.java
-```java클래스
+```
+Public java클래스
 	public Integer getPage() {
 		return page;
 	}
