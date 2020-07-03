@@ -1318,8 +1318,8 @@ END
 
 ```
 기존방법 (아래방법으로는 자동증가 AI 필드값에 누락된 번호가 들어갑니다.)
-SET FOREIGN_KEY_CHECKS = 0;
-truncate TABLE tbl_board;
+SET FOREIGN_KEY_CHECKS = 0; #제약조건때문에 truncate하지 못할때 실행
+truncate TABLE tbl_board; #AI 데이터까지 모두 지우기
 -- 초기 더미데이터 1개 입력(아래)
 INSERT INTO tbl_board (bno, title, content, writer) VALUES
 (1, '수정된 글입니다.', '수정 테스트 ', 'user00');
