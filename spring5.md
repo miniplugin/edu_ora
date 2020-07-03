@@ -1281,14 +1281,11 @@ public class RestMemberController {
 
 ---
 
-# #게시판 페이징 처리(20200703강의예정)
-----
-
-### 어제 강의중 신규로 사용한 스프링 애노테이션 부분 확인
+### 20200702 강의중 신규로 사용한 스프링 애노테이션 부분 확인
 - @ResponseBody 에서 Body와 Header 부분 비교(크롬 > 개발자도구 > 네트워크 탭)
 - @Transactional 이론
 
-### 어제 작업중 미완성 소스 부분 처리
+### 20200702 작업중 미완성 소스 부분 처리
 ```
 	List<String> files = new ArrayList<>();
 	files.add("sample1.jpg");
@@ -1302,8 +1299,36 @@ public class RestMemberController {
 	System.out.println(filenames[0] + filenames[1] + filenames[2]);
 ```
 
+----
+# #게시판 페이징 처리(20200706강의예정)
+----
+### 더미테이터 insert구문으로 등록시 누락되는 번호발생 문제처리(프로시저로 처리)
+```
+CREATE PROCEDURE loopInsert() 
+BEGIN
+	DECLARE i INT DEFAULT 1;
+	WHILE i <= 500 DO
+		INSERT INTO tbl_board (bno, title, content, writer) VALUES
+		(i, '수정된 글입니다.', '수정 테스트', 'user00');
+		SET i = i + 1;
+	END WHILE;
+    -- 실행 CALL loopInsert;
+END
+```
 
-
+```
+기존방법 (아래방법으로는 자동증가 AI 필드값에 누락된 번호가 들어갑니다.)
+SET FOREIGN_KEY_CHECKS = 0;
+truncate TABLE tbl_board;
+-- 초기 더미데이터 1개 입력(아래)
+INSERT INTO tbl_board (bno, title, content, writer) VALUES
+(1, '수정된 글입니다.', '수정 테스트 ', 'user00');
+-- 더미데이터 입력 첫번째 방법(아래)
+INSERT INTO tbl_board (title, content, writer)
+SELECT title, content, writer FROM TBL_BOARD;
+-- 더미데이터 입력 두번째 방법(아래)
+INSERT INTO TBL_BOARD SELECT * FROM TBL_BOARD;
+```
 ### 개발환경
 Server - Java(Spring 4.3.22)사용
 Web - Jsp사용
@@ -1315,7 +1340,6 @@ Web - Jsp사용
 	2. 게시판 게시글 갯수(Count) 값을 가져올것,
 	3. 갯수와 현재 페이지 번호를 가지고 페이징 알고리즘을 활용하여 End페이지 계산 및 Prev,Next버튼 생성
 
-----
 ### 소스코드
 #### @Controller
 ```
