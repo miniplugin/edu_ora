@@ -1304,7 +1304,7 @@ public class RestMemberController {
 ----
 ### 더미테이터 insert구문으로 등록시 누락되는 번호발생 문제처리(프로시저로 처리)
 ```
-CREATE PROCEDURE loopInsert() 
+CREATE PROCEDURE dummyInsert() 
 BEGIN
 	DECLARE i INT DEFAULT 1;
 	WHILE i <= 500 DO
@@ -1312,7 +1312,7 @@ BEGIN
 		(i, '수정된 글입니다.', '수정 테스트', 'user00');
 		SET i = i + 1;
 	END WHILE;
-    -- 실행 CALL loopInsert;
+    -- 실행 CALL dummyInsert;
 END
 ```
 
