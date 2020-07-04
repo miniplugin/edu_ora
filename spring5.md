@@ -1348,14 +1348,14 @@ Web - Jsp사용
 
 ```
 public class PageVO {
-	private int perPageNum;//쿼리 공통사용
-	private int pageStart; //쿼리에서 사용
-	private int page;      //jsp에서 사용
-	private int startPage; //jsp에서 사용
-	private int endPage;   //jsp에서 사용
-	private int totalCount;//jsp에서 사용 endPage가 10을 넘을때 사용
-	private boolean prev;  //jsp에서 사용
-	private boolean next;  //jsp에서 사용
+	private int perPageNum;//쿼리 공통사용-1페이지당 보여줄 게시물 개수
+	private int startBno;  //쿼리에서 사용-페이지에서 보여줄 게시물 시작번호
+	private int page;      //jsp에서 사용-뷰단에서 선택한 페이지 번호
+	private int startPage; //jsp에서 사용-뷰단에서 보여줄 페이지 시작번호
+	private int endPage;   //jsp에서 사용-뷰단에서 보여줄 페이지 끝번호
+	private int totalCount;//jsp에서 사용-뷰단에서 예를 들어 endPage가 10을 넘을때 계산식에 사용
+	private boolean prev;  //jsp에서 사용-뷰단에서 startPage 이전게시물이 존재하는지 검사용
+	private boolean next;  //jsp에서 사용-뷰단에서 endPage 다음게시물이 존재하는지 검사용
 	
 	public int getTotalCount() {
 		return totalCount;
@@ -1401,13 +1401,13 @@ public class PageVO {
 		this.startPage = startPage;
 	}
 	
-	public int getPageStart() {
+	public int getStartBno() {
 		//DB쿼리에서 사용...시작데이터번호 = (페이지번호 - 1)*페이지당 보여지는 개수.
-		pageStart = (this.page - 1) * perPageNum;
-		return pageStart;
+		startBno = (this.page - 1) * perPageNum;
+		return startBno;
 	}
-	public void setPageStart(int pageStart) {
-		this.pageStart = pageStart;
+	public void setStartBno(int startBno) {
+		this.startBno = startBno;
 	}
 	
 	private void calcPage() {
