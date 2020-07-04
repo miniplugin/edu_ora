@@ -1336,120 +1336,146 @@ Web - Jsp사용
 
 ----
 ### 순서
-	1. 현재 페이지번호를 Web으로부터 받아올것 ,
-	2. 게시판 게시글 갯수(Count) 값을 가져올것,
-	3. 갯수와 현재 페이지 번호를 가지고 페이징 알고리즘을 활용하여 End페이지 계산 및 Prev,Next버튼 생성
+	1. 쿼리 생성 limit #{pageStart}, #{perPageNum}
+	2. 현재 페이지번호를 Web으로부터 받아서 DAO 와 DB 사이에 get/set으로 사용할 VO 클래스 추가,
+	3. 게시판 게시글 갯수(Count) 값을 가져올것 - 필요한 DAO, Service 클래스 변경 및 추가,
+	4. Controller 클래스에서 PageVO클래스 초기값 지정 및 확인 후 jsp와 데이터 주고받는 부분 추가.
+	5. jsp페이지에 갯수와 현재 페이지 번호를 가지고 페이징 알고리즘을 활용하여 End페이지 계산 및 Prev,Next버튼 생성
 
 ### 소스코드
+
+####PageVO.java
+
+```
+public class PageVO {
+	private int perPageNum;//쿼리 공통사용
+	private int pageStart; //쿼리에서 사용
+	private int page;      //jsp에서 사용
+	private int startPage; //jsp에서 사용
+	private int endPage;   //jsp에서 사용
+	private int totalCount;//jsp에서 사용 endPage가 10을 넘을때 사용
+	private boolean prev;  //jsp에서 사용
+	private boolean next;  //jsp에서 사용
+	
+	public int getTotalCount() {
+		return totalCount;
+	}
+	public void setTotalCount(int totalCount) {
+		this.totalCount = totalCount;
+		calcPage();
+	}
+	public boolean isPrev() {
+		return prev;
+	}
+	public void setPrev(boolean prev) {
+		this.prev = prev;
+	}
+	public boolean isNext() {
+		return next;
+	}
+	public void setNext(boolean next) {
+		this.next = next;
+	}
+	public int getPage() {
+		return page;
+	}
+	public void setPage(int page) {
+		this.page = page;
+	}
+	public int getPerPageNum() {
+		return perPageNum;
+	}
+	public void setPerPageNum(int perPageNum) {
+		this.perPageNum = perPageNum;
+	}
+	public int getEndPage() {
+		return endPage;
+	}
+	public void setEndPage(int endPage) {
+		this.endPage = endPage;
+	}
+	public int getStartPage() {
+		return startPage;
+	}
+	public void setStartPage(int startPage) {
+		this.startPage = startPage;
+	}
+	
+	public int getPageStart() {
+		//DB쿼리에서 사용...시작데이터번호 = (페이지번호 - 1)*페이지당 보여지는 개수.
+		pageStart = (this.page - 1) * perPageNum;
+		return pageStart;
+	}
+	public void setPageStart(int pageStart) {
+		this.pageStart = pageStart;
+	}
+	
+	private void calcPage() {
+		// page변수는 현재 페이지번호
+		int tempEnd = (int)(Math.ceil(page / 10.0) * 10); //ceil함수는 천장함수로 1은 -> 10출력, 11은 -> 20출력
+		// 현재 페이지번호를 기준으로 끝 페이지를 계산한다.(참고 round 는 반올림함수, floor 바닥함수)
+		this.startPage = tempEnd - 9;// 시작 페이지 계산
+		/**
+		 * 디버그 
+		System.out.println("디버그 page = " +page);
+		System.out.println("tempEnd = "+tempEnd);
+		System.out.println("this.totalCount =" +this.totalCount);
+		System.out.println("this.startPage =" +this.startPage);
+		*/
+		if (tempEnd * 10 > this.totalCount) { //현재페이지 번호로 계산한 게시물 개수가 실제 게시물 개수보다 많을경우
+			this.endPage = (int) Math.ceil(this.totalCount / 10.0);
+		} else {						
+			this.endPage = tempEnd;	          //현재페이지 번호로 계산된 게시물 개수가 실제 게시물 개수보다 적거나 같을 경우
+		}
+		//System.out.println("this.pageEnd = "+this.pageEnd);//디버그
+		this.prev = this.startPage != 1;            	//시작페이지가 1보다 크면 무조건 이전페이지가 있음 true
+		this.next = this.endPage * 10 < this.totalCount;//현재페이지 번호로 계산된 게시물개수가 실제 게시물 개수보다 작다면 다음페이지가 있음 true
+	}
+	
+}
+```
+
 #### @Controller
 ```
 AdminController클래스
 	@RequestMapping(value = "/admin/board/list", method = RequestMethod.GET)
-	public String boardList(PagingMaker pagingmaker, Locale locale, Model model) {
-
-		int count = 0;
-
-		pagingmaker.setPage(pagingmaker.getPage());
-
-		count = boardService.count();   // 레코드 총 갯수 구함
-		pagingmaker.setCount(count); // 페이지 계산
-
-		List<BoardVO> list = boardService.selectBoard(pagingmaker.getPage());
-
-		//System.out.println("list = " + list.toString());//디버그
-
+	public String boardList(@ModelAttribute("pageVO") PageVO pageVO, Locale locale, Model model) throws Exception {
+		//PageVO pageVO = new PageVO();
+		if(pageVO.getPage() < 1) {
+			pageVO.setPage(1);
+		}else {
+			pageVO.setPage(pageVO.getPage());
+		}
+		pageVO.setPerPageNum(10);
+		pageVO.setTotalCount(boardService.countBno());
+		List<BoardVO> list = boardService.selectBoard(pageVO);
+		//모델클래스는 jsp화면으로 boardService에서 셀렉트한 list값을 boardList변수명으로 보낸다.
 		model.addAttribute("boardList", list);
-		model.addAttribute("pagingMaker", pagingmaker);
-
+		model.addAttribute("pageVO", pageVO);
 		return "admin/board/board_list";
-	}	
+	}
 ```
- Web(jsp)에서 현재 페이지 번호를 Controller(/admin/board/list)에 전달,
- Controller는 PagingMaker클래스에 접근하여 페이지 계산.
- ----
-
-####PagingMaker.java
-```
-Public PagingMaker클래스
-	public Integer getPage() {
-		return page;
-	}
-
-	public void setPage(Integer page) {
-
-		if (page < 1) {
-			this.page = 1;
-			return;
-		}
-
-		this.page = page;
-	}
-
-	public void setCount(Integer count) {
-
-		if (count < 1) {
-			return;
-		}
-
-		this.count = count;
-		
-		System.out.println("총 컬럼 갯수 = "+count);
-		
-		calcPage();
-	}
-
-	private void calcPage() {
-
-		// page변수는 현재 페이지번호
-		int tempEnd = (int)(Math.ceil(page / 10.0) * 10); //ceil함수는 천장함수로 11.1 -> 12출력합니다. <-> floor 바닥함수
-		// 현재 페이지번호를 기준으로 끝 페이지를 계산한다.(참고 round 는 반올림함수)
-		
-		System.out.println("page = " +page);
-		System.out.println("tempEnd = "+tempEnd);
-		System.out.println("this.count =" +this.count);
-		
-		// 시작 페이지 계산
-		this.start = tempEnd - 9;
-		
-
-		if (tempEnd * 10 > this.count) { // 현재페이지 번호로 계산한 게시물 개수가 실제 게시물 개수보다 많을경우
-			this.end = (int) Math.ceil(this.count / 10.0);
-		} else {						
-			this.end = tempEnd;	 // 현재페이지 번호로 계산된 게시물 개수가 실제 게시물 개수보다 적거나 같을 경우
-		}
-
-		System.out.println("this.end = "+this.end);
-		
-		this.prev = this.start != 1;            //시작페이지가 1보다 크면 무조건 이전페이지가 있음 true
-		this.next = this.end * 10 < this.count;	//현재페이지 번호로 계산된 게시물개수가 실제 게시물 개수보다 작다면 다음페이지가 있음 true
-	}
-
-```
- 페이지 알고리즘 및 현재 페이지를 기준으로 마지막 페이지 , Prev, Next 계산.
-
+ 
+----
+Web(jsp)에서 현재 페이지 번호를 Controller(/admin/board/list)에 전달,
+Controller는 PagingMaker클래스에 접근하여 페이지 계산.
+페이지 알고리즘 및 현재 페이지를 기준으로 마지막 페이지 , Prev, Next 계산.
 ----
 
 #### board_list.jsp (일부)
 ```jsp
-<div class="text-center">
 <ul class="pagination">
-	<c:if test="${pagingMaker.prev}">
-		<li><a href='/admin/board/list?page=${pagingMaker.start -1}'>이전</a></li>
-	</c:if>
-
-	<c:forEach begin="${pagingMaker.start}" end="${pagingMaker.end}" var="idx">
-		<li
-			class='<c:out value="${idx == pagingMaker.page?'active':''}"/>'>
-			<a href='/admin/board/list?page=${idx}'>${idx}</a>
-		</li>
-
-	</c:forEach>
-
-	<c:if test="${pageMaker.next }">
-
-		<li><a href='/admin/board/list?page=${pagingMaker.end +1}'>다음</a></li>
-	</c:if>
+   <c:if test="${pageVO.prev}">
+      <li class="page-item"><a class="page-link" href='/admin/board/list?page=${pageVO.startPage -1}'>이전</a></li>
+   </c:if>
+   <c:forEach begin="${pageVO.startPage}" end="${pageVO.endPage}" var="idx">
+      <li class='page-item <c:out value="${idx == pageVO.page?'active':''}"/>'>
+         <a class="page-link" href='/admin/board/list?page=${idx}'>${idx}</a>
+      </li>
+   </c:forEach>
+   <c:if test="${pageVO.next}">
+      <li class="page-item"><a class="page-link" href='/admin/board/list?page=${pageVO.endPage +1}'>다음</a></li>
+   </c:if>
 </ul>
-</div>
 ```
 서버에서 계산된 페이지값을 받아서 화면(Web)에 출력 부분입니다.
