@@ -1345,32 +1345,32 @@ Web - Jsp사용
 ```
 AdminController클래스
 	@RequestMapping(value = "/admin/board/list", method = RequestMethod.GET)
-	public String boardList(PageMaker pagemaker, Locale locale, Model model) {
+	public String boardList(PagingMaker pagingmaker, Locale locale, Model model) {
 
 		int count = 0;
 
-		pagemaker.setPage(pagemaker.getPage());
+		pagingmaker.setPage(pagingmaker.getPage());
 
 		count = boardService.count();   // 레코드 총 갯수 구함
-		pagemaker.setCount(count); // 페이지 계산
+		pagingmaker.setCount(count); // 페이지 계산
 
-		List<BoardVO> list = boardService.selectBoard(pagemaker.getPage());
+		List<BoardVO> list = boardService.selectBoard(pagingmaker.getPage());
 
 		//System.out.println("list = " + list.toString());//디버그
 
 		model.addAttribute("boardList", list);
-		model.addAttribute("pageMaker", pagemaker);
+		model.addAttribute("pagingMaker", pagingmaker);
 
 		return "admin/board/board_list";
 	}	
 ```
  Web(jsp)에서 현재 페이지 번호를 Controller(/admin/board/list)에 전달,
- Controller는 PageMaker클래스에 접근하여 페이지 계산.
+ Controller는 PagingMaker클래스에 접근하여 페이지 계산.
  ----
 
-####PageMaker.java
+####PagingMaker.java
 ```
-Public java클래스
+Public PagingMaker클래스
 	public Integer getPage() {
 		return page;
 	}
@@ -1433,13 +1433,13 @@ Public java클래스
 ```jsp
 <div class="text-center">
 <ul class="pagination">
-	<c:if test="${pageMaker.prev}">
-		<li><a href='/admin/board/list?page=${pageMaker.start -1}'>이전</a></li>
+	<c:if test="${pagingMaker.prev}">
+		<li><a href='/admin/board/list?page=${pagingMaker.start -1}'>이전</a></li>
 	</c:if>
 
-	<c:forEach begin="${pageMaker.start}" end="${pageMaker.end}" var="idx">
+	<c:forEach begin="${pagingMaker.start}" end="${pagingMaker.end}" var="idx">
 		<li
-			class='<c:out value="${idx == pageMaker.page?'active':''}"/>'>
+			class='<c:out value="${idx == pagingMaker.page?'active':''}"/>'>
 			<a href='/admin/board/list?page=${idx}'>${idx}</a>
 		</li>
 
@@ -1447,7 +1447,7 @@ Public java클래스
 
 	<c:if test="${pageMaker.next }">
 
-		<li><a href='/admin/board/list?page=${pageMaker.end +1}'>다음</a></li>
+		<li><a href='/admin/board/list?page=${pagingMaker.end +1}'>다음</a></li>
 	</c:if>
 </ul>
 </div>
