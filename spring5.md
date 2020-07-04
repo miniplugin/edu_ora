@@ -1440,7 +1440,7 @@ public class PageVO {
 AdminController클래스
 	@RequestMapping(value = "/admin/board/list", method = RequestMethod.GET)
 	public String boardList(@ModelAttribute("pageVO") PageVO pageVO, Locale locale, Model model) throws Exception {
-		//PageVO pageVO = new PageVO();
+		//PageVO pageVO = new PageVO();//디버그 jsp와 연동전
 		if(pageVO.getPage() < 1) {
 			pageVO.setPage(1);
 		}else {
@@ -1458,8 +1458,9 @@ AdminController클래스
  
 ----
 Web(jsp)에서 현재 페이지 번호를 Controller(/admin/board/list)에 전달,
-Controller는 PagingMaker클래스에 접근하여 페이지 계산.
+Controller는 PageVO 클래스에 접근하여 페이지 계산.
 페이지 알고리즘 및 현재 페이지를 기준으로 마지막 페이지 , Prev, Next 계산.
+PageVO 클래스에서 계산된 페이지값을 받아서 화면(Web)에 출력 부분입니다.
 ----
 
 #### board_list.jsp (일부)
@@ -1478,4 +1479,3 @@ Controller는 PagingMaker클래스에 접근하여 페이지 계산.
    </c:if>
 </ul>
 ```
-서버에서 계산된 페이지값을 받아서 화면(Web)에 출력 부분입니다.
