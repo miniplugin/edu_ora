@@ -1307,7 +1307,7 @@ public class RestMemberController {
 CREATE PROCEDURE dummyInsert() 
 BEGIN
 	DECLARE i INT DEFAULT 1;
-	WHILE i <= 500 DO
+	WHILE i <= 100 DO
 		INSERT INTO tbl_board (bno, title, content, writer) VALUES
 		(i, '수정된 글입니다.', '수정 테스트', 'user00');
 		SET i = i + 1;
