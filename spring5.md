@@ -1336,7 +1336,7 @@ Web - Jsp사용
 
 ----
 ### 순서
-	1. 쿼리 생성 limit #{pageStart}, #{perPageNum}
+	1. 쿼리 생성 limit #{startBno}, #{perPageNum}
 	2. 현재 페이지번호를 Web으로부터 받아서 DAO 와 DB 사이에 get/set으로 사용할 VO 클래스 추가,
 	3. 게시판 게시글 갯수(Count) 값을 가져올것 - 필요한 DAO, Service 클래스 변경 및 추가,
 	4. Controller 클래스에서 PageVO클래스 초기값 지정 및 확인 후 jsp와 데이터 주고받는 부분 추가.
