@@ -1351,7 +1351,7 @@ Web - Jsp사용
 public class PageVO {
 	private int perPageNum;//쿼리 공통사용-1페이지당 보여줄 게시물 개수
 	private int startBno;  //쿼리에서 사용-페이지에서 보여줄 게시물 시작번호
-	private Integer page;      //jsp에서 사용-뷰단에서 선택한 페이지 번호
+	private Integer page;  //jsp에서 사용-뷰단에서 선택한 페이지 번호
 	private int startPage; //jsp에서 사용-뷰단에서 보여줄 페이지 시작번호
 	private int endPage;   //jsp에서 사용-뷰단에서 보여줄 페이지 끝번호
 	private int totalCount;//jsp에서 사용-뷰단에서 예를 들어 endPage가 10을 넘을때 계산식에 사용
@@ -1486,7 +1486,7 @@ PageVO 클래스에서 계산된 페이지값을 받아서 화면(Web)에 출력
 ----
 ### 순서
 	1. 쿼리 생성 <if test="searchType != null" > <if test="searchType == 'all'.toString()">, #{searchKeyword}
-	2. 기존 pageVO에 위 쿼리에 사용된 변수 2개 추가,
+	2. 기존 pageVO에 위 쿼리에 사용된 변수 2개 추가, private String searchType, private String searchKeyword
 	3. pageVO 변수추가에 따른 DAO, Service 클래스 변경,
 	4. 게시판 리스트 jsp페이지에서 검색폼에 <form>태그 및 <input> name 생성
 
@@ -1498,7 +1498,7 @@ PageVO 클래스에서 계산된 페이지값을 받아서 화면(Web)에 출력
 		<if test="searchType != null" > 
 			<if test="searchType == 'all'.toString()">
 			  and (   
-			  		title like CONCAT('%', #{searchKeyword}, '%') 
+			  	title like CONCAT('%', #{searchKeyword}, '%') 
 			        OR 
 			          content like CONCAT('%', #{searchKeyword}, '%') 
 			        OR 
