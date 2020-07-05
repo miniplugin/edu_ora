@@ -1566,9 +1566,8 @@ private Integer page;
 
 ```
 Controller 내용 추가
-@RequestMapping(value = "/admin/board/list", method = RequestMethod.GET)
-public String boardList(@Valid @ModelAttribute("pageVO") PageVO pageVO, BindingResult result, Locale locale, Model model) throws Exception {
-	// 에러가 있는지 검사 기존 ControllerAdvicedException.java 클래스를 이용하면 필요없음.
+@RequestMapping(value = "/admin/member/write", method = RequestMethod.POST)
+	public String memberWrite(@Valid MemberVO memberVO, BindingResult result, Locale locale, RedirectAttributes rdat, Model model, HttpServletRequest request) throws Exception {
 	if( result.hasErrors() ) {
 		// 에러를 List로 저장
 		List<ObjectError> list = result.getAllErrors();
@@ -1578,6 +1577,7 @@ public String boardList(@Valid @ModelAttribute("pageVO") PageVO pageVO, BindingR
 		model.addAttribute("exception", list);
 		return "/admin/error_valid";
 	}else{
+		//이전페이지 링크저장 <p><a href='<c:out value="${prevPage}" />'>이전페이지로 돌아가기</a></p>
 		String referrer = request.getHeader("Referer");
 		request.getSession().setAttribute("prevPage", referrer);
 	}
