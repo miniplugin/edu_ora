@@ -1351,7 +1351,7 @@ Web - Jsp사용
 public class PageVO {
 	private int perPageNum;//쿼리 공통사용-1페이지당 보여줄 게시물 개수
 	private int startBno;  //쿼리에서 사용-페이지에서 보여줄 게시물 시작번호
-	private int page;      //jsp에서 사용-뷰단에서 선택한 페이지 번호
+	private Integer page;      //jsp에서 사용-뷰단에서 선택한 페이지 번호
 	private int startPage; //jsp에서 사용-뷰단에서 보여줄 페이지 시작번호
 	private int endPage;   //jsp에서 사용-뷰단에서 보여줄 페이지 끝번호
 	private int totalCount;//jsp에서 사용-뷰단에서 예를 들어 endPage가 10을 넘을때 계산식에 사용
@@ -1377,10 +1377,10 @@ public class PageVO {
 	public void setNext(boolean next) {
 		this.next = next;
 	}
-	public int getPage() {
+	public Integer getPage() {
 		return page;
 	}
-	public void setPage(int page) {
+	public void setPage(Integer page) {
 		this.page = page;
 	}
 	public int getPerPageNum() {
@@ -1442,7 +1442,7 @@ AdminController클래스
 	@RequestMapping(value = "/admin/board/list", method = RequestMethod.GET)
 	public String boardList(@ModelAttribute("pageVO") PageVO pageVO, Locale locale, Model model) throws Exception {
 		//PageVO pageVO = new PageVO();//디버그 jsp와 연동전
-		if(pageVO.getPage() < 1) {
+		if(pageVO.getPage() == null) {
 			pageVO.setPage(1);
 		}else {
 			pageVO.setPage(pageVO.getPage());
@@ -1528,4 +1528,99 @@ PageVO 클래스에서 계산된 페이지값을 받아서 화면(Web)에 출력
 </sql>
 <!-- include 사용법 -->
 <include refid="sqlWhere"></include>
+```
+
+----
+# #게시판 유효성검사 처리(위에서 작업한 Controller 클래스에 @Valid를 추가하면 됩니다)
+----
+### 순서(게시판검색 예)
+	1. pom.xml 디펜던시 추가
+	2. 기존 pageVO에 @NotBlank(message="페이지번호가 공백 입니다."),@Range(min = 0) 추가,
+	3. pageVO 변수 수정에 따른 Controller클래스 변경,
+	4. 뷰단에 에러처리에 해당되는 error_valid.jsp페이지 생성
+
+### 소스코드(아래)
+
+```
+pom.xml 내용 추가
+<!-- 유효성 검사 -->
+<dependency>
+  <groupId>javax.validation</groupId>
+  <artifactId>validation-api</artifactId>
+  <version>1.1.0.Final</version>
+</dependency>
+<dependency>
+  <groupId>org.hibernate</groupId>
+  <artifactId>hibernate-validator</artifactId>
+  <version>5.4.2.Final</version>
+</dependency>
+
+```
+
+```
+PageVO.java 내용 수정
+@NotBlank(message="페이지번호가 공백 입니다.")
+@Range(min = 0)
+private Integer page;
+```
+
+```
+Controller 내용 추가
+@RequestMapping(value = "/admin/board/list", method = RequestMethod.GET)
+public String boardList(@Valid @ModelAttribute("pageVO") PageVO pageVO, BindingResult result, Locale locale, Model model) throws Exception {
+	// 에러가 있는지 검사
+	if( result.hasErrors() ) {
+		// 에러를 List로 저장
+		List<ObjectError> list = result.getAllErrors();
+		/*for( ObjectError error : list ) {
+			System.out.println("=====디버그=====" + error);
+		}*/
+		model.addAttribute("exception", list);
+		return "/admin/error_valid";
+	}
+	...
+```
+
+```
+error_valid.jsp 추가
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ include file="include/header.jsp" %>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">에러 페이지</h1>
+          </div><!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item">에러명</li>
+              <li class="breadcrumb-item active">${exception}</li>
+            </ol>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <!-- Main content -->
+    <div class="content">
+    <p>에러 상세내역</p>
+    <ul>
+    <c:forEach items="${exception}" var="stack">
+    	<li>${stack.toString()}</li>
+    </c:forEach>
+    
+    
+    </ul>
+    </div>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+<%@ include file="include/footer.jsp" %> 
 ```
