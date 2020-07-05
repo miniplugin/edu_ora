@@ -1413,7 +1413,7 @@ public class PageVO {
 	
 	private void calcPage() {
 		// page변수는 현재 페이지번호
-		int tempEnd = (int)(Math.ceil(page / 10.0) * 10); //ceil함수는 천장함수로 1은 -> 10출력, 11은 -> 20출력
+		int tempEnd = (int)(Math.ceil(page / 10.0) * 10); //ceil함수는 천장함수로 0.9은 -> 1출력, 1.1은 -> 2출력
 		// 현재 페이지번호를 기준으로 끝 페이지를 계산한다.(참고 round 는 반올림함수, floor 바닥함수)
 		this.startPage = tempEnd - 9;// 시작 페이지 계산
 		/**
