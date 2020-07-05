@@ -1536,7 +1536,7 @@ PageVO 클래스에서 계산된 페이지값을 받아서 화면(Web)에 출력
 ### 순서(게시판검색 예)
 	1. pom.xml 디펜던시 추가
 	2. 기존 pageVO에 @NotBlank(message="페이지번호가 공백 입니다."),@Range(min = 0) 추가,
-	3. pageVO 변수 수정에 따른 Controller클래스 변경,
+	3. BoardVO 변수 수정에 따른 Controller클래스 변경,
 	4. 뷰단에 에러처리에 해당되는 error_valid.jsp페이지 생성
 
 ### 소스코드(아래)
