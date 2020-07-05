@@ -1341,6 +1341,7 @@ Web - Jsp사용
 	3. 게시판 게시글 갯수(Count) 값을 가져올것 - 필요한 DAO, Service 클래스 변경 및 추가,
 	4. Controller 클래스에서 PageVO클래스 초기값 지정 및 확인 후 jsp와 데이터 주고받는 부분 추가.
 	5. jsp페이지에 갯수와 현재 페이지 번호를 가지고 페이징 알고리즘을 활용하여 End페이지 계산 및 Prev,Next버튼 생성
+	6. 뷰단에서 리스트 -> 상세보기 -> 수정 -> 쓰기 페이지 이동 후에도 페이징이 유지되게 처리
 
 ### 소스코드
 
@@ -1478,4 +1479,53 @@ PageVO 클래스에서 계산된 페이지값을 받아서 화면(Web)에 출력
       <li class="page-item"><a class="page-link" href='/admin/board/list?page=${pageVO.endPage +1}'>다음</a></li>
    </c:if>
 </ul>
+```
+
+----
+# #게시판 검색 처리(위에서 작업한 페이징처리에 VO를 추가하면 됩니다)
+----
+### 순서
+	1. 쿼리 생성 <if test="searchType != null" > <if test="searchType == 'all'.toString()">, #{searchKeyword}
+	2. 기존 pageVO에 위 쿼리에 사용된 변수 2개 추가,
+	3. pageVO 변수추가에 따른 DAO, Service 클래스 변경,
+	4. 게시판 리스트 jsp페이지에서 검색폼에 <form>태그 및 <input> name 생성
+
+### 소스코드(아래)
+
+```매퍼쿼리
+	<select id="selectBoard" resultType="org.edu.vo.BoardVO">
+		select * from tbl_board where 1=1
+		<if test="searchType != null" > 
+			<if test="searchType == 'all'.toString()">
+			  and (   
+			  		title like CONCAT('%', #{searchKeyword}, '%') 
+			        OR 
+			          content like CONCAT('%', #{searchKeyword}, '%') 
+			        OR 
+			          writer like CONCAT('%', #{searchKeyword}, '%')
+			      )
+			</if>
+		</if> 
+		order by bno ASC
+		limit #{startBno}, #{perPageNum} 
+	</select>
+```
+
+```
+<!-- 반복된는 조건절을 include 문으로 대체 -->
+<sql id="sqlWhere">
+	<if test="searchType != null" > 
+		<if test="searchType == 'all'.toString()">
+		  and (   
+		  		title like CONCAT('%', #{searchKeyword}, '%') 
+		        OR 
+		          content like CONCAT('%', #{searchKeyword}, '%') 
+		        OR 
+		          writer like CONCAT('%', #{searchKeyword}, '%')
+		      )
+		</if>
+	</if>
+</sql>
+<!-- include 사용법 -->
+<include refid="sqlWhere"></include>
 ```
