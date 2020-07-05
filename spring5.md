@@ -1558,10 +1558,10 @@ pom.xml 내용 추가
 ```
 
 ```
-PageVO.java 내용 수정
-@NotBlank(message="페이지번호가 공백 입니다.")
-@Range(min = 0)
-private Integer page;
+BoardVO.java 내용 수정
+@NotNull(message="회원아이디가 공백 입니다.")
+@NotBlank(message="회원아이디가 공백 입니다.")
+private String user_id;
 ```
 
 ```
