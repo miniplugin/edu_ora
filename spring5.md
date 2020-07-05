@@ -1568,7 +1568,7 @@ private Integer page;
 Controller 내용 추가
 @RequestMapping(value = "/admin/board/list", method = RequestMethod.GET)
 public String boardList(@Valid @ModelAttribute("pageVO") PageVO pageVO, BindingResult result, Locale locale, Model model) throws Exception {
-	// 에러가 있는지 검사
+	// 에러가 있는지 검사 기존 ControllerAdvicedException.java 클래스를 이용하면 필요없음.
 	if( result.hasErrors() ) {
 		// 에러를 List로 저장
 		List<ObjectError> list = result.getAllErrors();
@@ -1577,12 +1577,15 @@ public String boardList(@Valid @ModelAttribute("pageVO") PageVO pageVO, BindingR
 		}*/
 		model.addAttribute("exception", list);
 		return "/admin/error_valid";
+	}else{
+		String referrer = request.getHeader("Referer");
+		request.getSession().setAttribute("prevPage", referrer);
 	}
 	...
 ```
 
 ```
-error_valid.jsp 추가
+//error_valid.jsp 추가 기존 ControllerAdvicedException.java 클래스를 이용하면 필요없음.
 
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
@@ -1623,4 +1626,42 @@ error_valid.jsp 추가
   </div>
   <!-- /.content-wrapper -->
 <%@ include file="include/footer.jsp" %> 
+```
+
+```
+//ControllerAdvicedException.java 클래스에서 이전페이지 저장하기 부분 추가
+
+package org.edu.controller;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.ModelAndView;
+
+@ControllerAdvice
+public class ControllerAdviceException {
+	private static final Logger logger = LoggerFactory.getLogger(ControllerAdviceException.class);
+	@ExceptionHandler(Exception.class)
+	public ModelAndView errorModelAndView(Exception ex, HttpServletRequest request) {
+		ModelAndView modelAndView = new ModelAndView();
+		//모델앤뷰에서 셋뷰네임은 jsp파일명과 매칭
+		modelAndView.setViewName("admin/error_controller");
+		modelAndView.addObject("exception", ex);
+		//에러시 이전페이지 이동 코딩시작
+		HttpSession session = request.getSession();
+		String redirectUrl = (String) session.getAttribute("prevPage");
+		      if (redirectUrl != null) {
+		          session.removeAttribute("prevPage");
+		      }
+		      logger.info("결과" + redirectUrl);
+		      modelAndView.addObject("prevPage", redirectUrl);
+		//에러시 이전페이지 이동 코딩끝
+		return modelAndView;
+	}
+}
+
 ```
