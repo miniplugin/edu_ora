@@ -1189,7 +1189,7 @@ public String register(RegisterCommand registerCommand, Errors errors) {
 
 ---
 
-## ch16 JSON 응답과 처리
+## ch16 JSON 응답과 처리(강사자료-댓글컨트롤러 https://github.com/miniplugin/springframework/blob/master/src/main/java/org/edu/controller/ReplyController.java + 안드로이드앱 연동은 강사블로그에서 gson 으로 검색)
 - Jackson 의존 모듈 추가
 ```bash
 +----------+       +---------+       +----------+
