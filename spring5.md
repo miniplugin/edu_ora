@@ -1669,9 +1669,27 @@ public class ControllerAdviceException {
 ----
 # #댓글(Ajax방식)달기 및 스프링 시큐리티는 설정파일 에서 부터 출발(우선 상단교재 내용에서 'JSON 응답과 처리' 로 검색)
 ----
+### 모든 작업전 회원 가입시 암호화 적용
+```
+AdminController의 insertMember메서드에 아래 내용 추가
+String new_pw = member.getUser_pw();
+	if(new_pw != "") {
+		//스프링 시큐리티 4.x BCryptPasswordEncoder 암호 사용
+		BCryptPasswordEncoder bcryptPasswordEncoder = new BCryptPasswordEncoder(10);
+		String bcryptPassword = bcryptPasswordEncoder.encode(new_pw);
+		member.setUser_pw(bcryptPassword);
+	}else {
+		return "redirect:/admin/member/listAll";
+	}
+```
+
 ### 소스코드(설정파일)
 - https://github.com/miniplugin/springframework/blob/master/src/main/webapp/WEB-INF/web.xml
 - https://github.com/miniplugin/springframework/blob/master/src/main/webapp/WEB-INF/spring/security-context.xml
+
+### 로그인UI(우선 사용자 홈페이지 메인(header,footer분리)과 로그인.jsp 부터 구현)
+- https://github.com/miniplugin/springframework/blob/master/src/main/webapp/WEB-INF/views/login.jsp
+- 로그인 POST액션 /login 은 security-context.xml 에서 지정
 
 ### 소스코드(로그인세션저장)
 ```
