@@ -1531,7 +1531,7 @@ PageVO 클래스에서 계산된 페이지값을 받아서 화면(Web)에 출력
 ```
 
 ----
-# #게시판 유효성검사 처리(위에서 작업한 Controller 클래스에 @Valid를 추가하면 됩니다)
+# #게시판 유효성검사 처리(상단교재 내용에서 'validator' 로 검색, 위에서 작업한 Controller 클래스에 @Valid를 추가하면 됩니다)
 ----
 ### 순서(게시판검색 예)
 	1. pom.xml 디펜던시 추가
@@ -1664,4 +1664,45 @@ public class ControllerAdviceException {
 	}
 }
 
+```
+
+----
+# #댓글(Ajax방식)달기 및 스프링 시큐리티는 설정파일 에서 부터 출발(우선 상단교재 내용에서 'JSON 응답과 처리' 로 검색)
+----
+### 소스코드(설정파일)
+- https://github.com/miniplugin/springframework/blob/master/src/main/webapp/WEB-INF/web.xml
+- https://github.com/miniplugin/springframework/blob/master/src/main/webapp/WEB-INF/spring/security-context.xml
+
+### 소스코드(로그인세션저장)
+```
+Controller클래스내용
+@RequestMapping(value = "/login_success", method = RequestMethod.GET)
+	public String login_success(Locale locale,HttpServletRequest request, RedirectAttributes rdat) {
+		logger.info("Welcome login_success! The client locale is {}.", locale);
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String username = "";//anonymousUser
+		String level = "";//ROLE_ANONYMOUS
+		Boolean enabled = false;
+		Object principal = authentication.getPrincipal();
+		if (principal instanceof UserDetails) {
+			enabled = ((UserDetails)principal).isEnabled();
+		}
+		HttpSession session = request.getSession();
+		if (enabled) {
+			Collection<? extends GrantedAuthority>  authorities = authentication.getAuthorities();
+			if(authorities.stream().filter(o -> o.getAuthority().equals("ROLE_ANONYMOUS")).findAny().isPresent())
+			{level = "ROLE_ANONYMOUS";}
+			if(authorities.stream().filter(o -> o.getAuthority().equals("ROLE_USER,")).findAny().isPresent())
+			{level = "ROLE_USER,";}
+			if(authorities.stream().filter(o -> o.getAuthority().equals("ROLE_ADMIN")).findAny().isPresent())
+			{level = "ROLE_ADMIN";}
+			username =((UserDetails)principal).getUsername();
+			//로그인 세션 저장
+			session.setAttribute("session_enabled", enabled);//인증확인
+			session.setAttribute("session_username", username);//사용자명
+			session.setAttribute("session_level", level);//사용자권한
+        	}
+		rdat.addFlashAttribute("msg", "success");//result 데이터를 숨겨서 전송
+		return "redirect:/";//새로고침 자동 등록 방지를 위해서 아래처럼 처리
+	}
 ```
