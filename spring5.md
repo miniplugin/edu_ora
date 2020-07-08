@@ -1672,7 +1672,7 @@ public class ControllerAdviceException {
 ### root-context.xml 파일 내용 추가
 ```
 기존 Hslq소스는 주석처리 후 아래 내용 추가
-<!-- HSQLDB FILE 사용 헤로쿠에 올릴때는 /tmp/embeded/edu.db 로 경로 수정 --> 
+<!-- HSQLDB FILE 사용 헤로쿠에 올릴때 경로는 /tmp/embeded/edu.db , 로컬PC일때 경로는 c:/egov/workspace/embeded/edu.db  --> 
 <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"> 
 	<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
 	<property name="url" value="jdbc:hsqldb:file:c:/egov/workspace/embeded/edu.db" />
