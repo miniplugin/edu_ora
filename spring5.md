@@ -1667,7 +1667,33 @@ public class ControllerAdviceException {
 ```
 
 ----
-# #댓글(Ajax방식)달기 및 스프링 시큐리티는 설정파일 에서 부터 출발(우선 상단교재 내용에서 'JSON 응답과 처리' 로 검색)
+# #HSQLDB file 로 사용(기본은 메모리DB 이고, Mysql처럼 고정값을 가지도록 처리)
+----
+### root-context.xml 파일 내용 추가
+```
+기존 Hslq소스는 주석처리 후 아래 내용 추가
+<!-- HSQLDB FILE 사용 헤로쿠에 올릴때는 /tmp/embeded/edu.db 로 경로 수정 --> 
+<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"> 
+	<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
+	<property name="url" value="jdbc:hsqldb:file:c:/egov/workspace/embeded/edu.db" />
+	<property name="username" value="sa" />
+	<property name="password" value="" />
+</bean> 
+<!-- CREATE TABLE 초기 1회만 실행 -->
+<jdbc:initialize-database data-source="dataSource" ignore-failures="DROPS"> 
+	<jdbc:script location="classpath:/db/embeded_edu_dummy.sql" /> 
+</jdbc:initialize-database>
+
+embeded_edu_dummy.sql 내용은 기존 코드를 복사해서 수정 후 사용
+drop table tbl_attach if exists
+drop table tbl_reply if exists
+drop table tbl_board if exists
+drop table tbl_member if exists
+CREATE MEMORY TABLE -> CREATE TABLE 로 변경
+```
+
+----
+# #스프링 시큐리티는 설정파일 에서 부터 출발
 ----
 ### 모든 작업전 회원 가입시 암호화 적용
 ```
@@ -1724,3 +1750,7 @@ Controller클래스내용
 		return "redirect:/";//새로고침 자동 등록 방지를 위해서 아래처럼 처리
 	}
 ```
+
+----
+# #댓글(Ajax방식)달기(우선 상단교재 내용에서 'JSON 응답과 처리' 로 검색)
+----
